@@ -1,0 +1,174 @@
+name: create-release-upload
+
+on: 
+  push:
+    tags:
+    - 'v*'
+
+env:
+  GO_VERSION: 1.16.x
+
+jobs:
+  create_releases:
+    name: create-releases
+    runs-on: ubuntu-18.04
+    outputs:
+      release_url: ${{ steps.output_url.outputs.upload_url }}
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Changes in this Release
+          - First Change
+          - Second Change
+        draft: false
+        prerelease: true
+      continue-on-error: true
+    - name: Get release
+      if: steps.create_release.outcome == 'failure'
+      id: get_release
+      uses: bruceadams/get-release@v1.2.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: output url
+      id: output_url
+      run: |
+        echo "::set-output name=upload_url::${{steps.get_release.outputs.upload_url}}${{steps.create_release.outputs.upload_url}}"
+
+  upload-object-ubuntu:
+    name: upload-object-ubuntu
+    needs: create_releases
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows, linux, darwin]
+        arch: [x64, arm64]
+        include:
+          - os: windows
+            arch: x64
+            goarch: amd64
+            filename: generateblock-win_amd64.exe
+          - os: windows
+            arch: arm64
+            goarch: arm
+            filename: generateblock-win_arm.exe
+          - os: linux
+            arch: x64
+            goarch: amd64
+            filename: generateblock-linux_amd64
+          - os: linux
+            arch: arm64
+            goarch: arm64
+            filename: generateblock-linux_arm64
+          - os: darwin
+            arch: x64
+            goarch: amd64
+            filename: generateblock-darwin_amd64
+          - os: darwin
+            arch: arm64
+            goarch: arm64
+            filename: generateblock-darwin_arm64
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: setup go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ env.GO_VERSION }}
+    - name: build
+      env:
+        GOOS: ${{ matrix.os }}
+        GOARCH: ${{ matrix.goarch }}
+        OUTPUT: ${{ matrix.filename }}
+      run: |
+        go mod download
+        go build -ldflags "-s -w" -o ${OUTPUT} ./cmd/generateblock/
+    - name: create archive file
+      if: matrix.os != 'windows'
+      env:
+        OUTPUT: ${{ matrix.filename }}
+      run: |
+        gzip ${OUTPUT}
+        echo "---- dump gzip file ----"
+        ls -l generateblock*
+    - name: create archive file for windows
+      if: matrix.os == 'windows'
+      env:
+        OUTPUT: ${{ matrix.filename }}
+      run: |
+        zip ${OUTPUT}.zip ${OUTPUT}
+        echo "---- dump zip file ----"
+        ls -l generateblock*
+    - name: output url
+      id: get_url
+      run: echo "::set-output name=upload_url::${{ needs.create_releases.outputs.release_url }}"
+    - name: Upload Release Asset
+      if: matrix.os != 'windows'
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_url.outputs.upload_url }}
+        asset_path: ./${{ matrix.filename }}.gz
+        asset_name: ${{ matrix.filename }}}.gz
+        asset_content_type: application/gzip
+    - name: Upload Release Asset for windows
+      if: matrix.os == 'windows'
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_url.outputs.upload_url }}
+        asset_path: ./${{ matrix.filename }}.zip
+        asset_name: ${{ matrix.filename }}}.zip
+        asset_content_type: application/zip
+
+  upload-object-alpine-3-14:
+    name: upload-object-alpine-3.14
+    needs: create_releases
+    runs-on: ubuntu-18.04
+    env:
+      FILENAME: "generateblock-alpine3_14"
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: list
+      run: ls -a $GITHUB_WORKSPACE
+    - name: docker setup
+      uses: docker://golang:1.16-alpine3.14
+      with:
+        entrypoint: /github/workspace/.github/workflows/docker/alpine_build_entrypoint.sh
+    - name: create archive file
+      run: |
+        gzip ${FILENAME}
+        echo "---- dump gzip file ----"
+        ls -l generateblock*
+    - name: output url
+      id: get_url
+      run: echo "::set-output name=upload_url::${{ needs.create_releases.outputs.release_url }}"
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_url.outputs.upload_url }}
+        asset_path: ./${{ env.FILENAME }}.gz
+        asset_name: ${{ env.FILENAME }}}.gz
+        asset_content_type: application/gzip

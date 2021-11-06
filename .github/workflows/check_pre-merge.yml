@@ -1,0 +1,57 @@
+name: sprint pre-merge check
+
+on: 
+  push:
+    branches:
+    - master
+    - main
+    - develop
+    - features/sprint*
+    - feature/ci*
+    paths-ignore:
+    - 'README.md'
+    - '*.dockerfile'
+    - '*.json'
+    - 'LICENSE'
+    - 'pc/**'
+  pull_request:
+    branches:
+    - master
+    - main
+    - develop
+    - features/sprint*
+
+jobs:
+  test-by-build:
+    name: build and test
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: build image
+      run: docker compose build generateblock-bitcoin generateblock-elements
+    - name: start bitcoin and elements
+      run: docker compose up -d testing-bitcoin testing-elements
+    - name: start generateblock
+      run: docker compose up -d generateblock-bitcoin generateblock-elements
+    - name: test
+      run: docker compose up exec-test
+    - name: stop
+      run: docker compose down
+
+  test-by-binary:
+    name: binary test
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: build image
+      run: docker compose build generateblock-bin-bitcoin generateblock-bin-elements
+    - name: start bitcoin and elements
+      run: docker compose up -d testing-bitcoin testing-elements
+    - name: start generateblock
+      run: docker compose up -d generateblock-bin-bitcoin generateblock-bin-elements
+    - name: test
+      run: docker compose up exec-test
+    - name: stop
+      run: docker compose down

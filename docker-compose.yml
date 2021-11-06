@@ -1,0 +1,128 @@
+version: '3.8'
+
+x-bitcoin-node-env: &bitcoin-node-env
+  GENERATE_BLOCK_CONNECTION_NETWORK: regtest
+  GENERATE_BLOCK_CONNECTION_HOST: testing-bitcoin:18443
+  CONNECTION_PRC_USERID: bitcoinrpc
+  CONNECTION_PRC_PASSWORD: password
+  GENERATE_BLOCK_GENERATETOADDRESS: bcrt1qpaujknvwumkwplvpdlh6gtsv7hrl60a37fc9tx
+
+x-elements-node-env: &elements-node-env
+  GENERATE_BLOCK_CONNECTION_NETWORK: elementsregtest
+  GENERATE_BLOCK_CONNECTION_HOST: testing-elements:18447
+  CONNECTION_PRC_USERID: elementsrpc
+  CONNECTION_PRC_PASSWORD: password
+  DYNAFED_FEDPEG_SCRIPT: 5121024241bff4d20f2e616bef2f6e5c25145c068d45a78da3ddba433b3101bbe9a37d51ae
+  DYNAFED_PAK: 02b6991705d4b343ba192c2d1b10e7b8785202f51679f26a1f2cdbe9c069f8dceb024fb0908ea9263bedb5327da23ff914ce1883f851337d71b3ca09b32701003d05,030e07d4f657c0c169e04fac5d5a8096adb099874834be59ad1e681e22d952ccda0214156e4ae9168289b4d0c034da94025121d33ad8643663454885032d77640e3d
+
+services:
+  alpine-3.14:
+    build:
+      context: .
+      dockerfile: ./docker/alpine3_14.dockerfile
+    volumes:
+      - .:/workspace
+    command: generateblock -h
+
+  debian-10:
+    build:
+      context: .
+      dockerfile: ./docker/debian10.dockerfile
+    volumes:
+      - .:/workspace
+    command: generateblock -h
+
+  debian-11:
+    build:
+      context: .
+      dockerfile: ./docker/debian11.dockerfile
+    volumes:
+      - .:/workspace
+    command: generateblock -h
+
+  testing-bitcoin:
+    image: ghcr.io/cryptogarageinc/elements-testing:v0.1.1
+    container_name: testing-bitcoin
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace/
+    ports:
+      - 18443:18443
+    networks:
+      - testing_network
+    command: /bin/bash -c "./tests/test_entrypoint_bitcoin.sh"
+
+  testing-elements:
+    image: ghcr.io/cryptogarageinc/elements-testing:v0.1.1
+    container_name: testing-elements
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace/
+    ports:
+      - 18447:18447
+    networks:
+      - testing_network
+    depends_on:
+      - testing-bitcoin
+    command: /bin/bash -c "./tests/test_entrypoint_elements.sh"
+
+  generateblock-bitcoin:
+    build:
+      context: .
+      dockerfile: ./docker/debian11.dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/
+    environment: *bitcoin-node-env
+    networks:
+      - testing_network
+    command: /bin/bash -c "./tests/test_generate_bash.sh"
+
+  generateblock-elements:
+    build:
+      context: .
+      dockerfile: ./docker/alpine3_14.dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/
+    environment: *elements-node-env
+    networks:
+      - testing_network
+    command: /bin/ash -c "./tests/test_generate_ash.sh"
+
+  exec-test:
+    image: ghcr.io/cryptogarageinc/elements-testing:v0.1.1
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace/
+    networks:
+      - testing_network
+    command: /bin/bash -c "./tests/test.sh"
+
+  generateblock-bin-bitcoin:
+    build:
+      context: .
+      dockerfile: ./tests/testing_debian11.dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/
+    environment: *bitcoin-node-env
+    networks:
+      - testing_network
+    command: /bin/bash -c "./tests/test_generate_bash.sh"
+
+  generateblock-bin-elements:
+    build:
+      context: .
+      dockerfile: ./tests/testing_alpine3_14.dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/
+    environment: *elements-node-env
+    networks:
+      - testing_network
+    command: /bin/ash -c "./tests/test_generate_ash.sh"
+
+networks:
+  testing_network:
+    driver: bridge
