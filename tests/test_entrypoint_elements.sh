@@ -25,6 +25,5 @@ do
   bitcoin-cli -rpcconnect=testing-bitcoin -rpcport=18443 -rpcuser=bitcoinrpc -rpcpassword=password ping > /dev/null 2>&1
 done
 echo "start bitcoin node"
-bitcoin-cli -rpcconnect=testing-bitcoin -rpcport=18443 -rpcuser=bitcoinrpc -rpcpassword=password createwallet wallet
 
 elementsd -chain=liquidregtest -datadir=${WORKDIR_PATH}/elementsd_datadir

@@ -26,13 +26,6 @@ class TestElements(unittest.TestCase):
             host='testing-bitcoin', port=18443, rpc_user='bitcoinrpc', rpc_password='password')
         self.elmConn = RpcWrapper(
             host='testing-elements', port=18447, rpc_user='elementsrpc', rpc_password='password')
-        # init command
-        btc_rpc = self.btcConn.get_rpc()
-        try:
-            btc_rpc.settxfee(0.00001)
-        except Exception as err:
-            print('Exception({})'.format(err))
-            btc_rpc.createwallet('wallet')
 
     def test_bitcoin_elements(self):
         btc_rpc = self.btcConn.get_rpc()
