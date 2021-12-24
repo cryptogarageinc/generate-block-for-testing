@@ -4,7 +4,7 @@ RUN apk add --no-cache libstdc++ wget
 
 WORKDIR /opt/generateblock
 
-RUN wget https://github.com/cryptogarageinc/generate-block-for-testing/releases/download/v0.0.1-rc.1/generateblock-alpine3_14.gz \
+RUN wget https://github.com/cryptogarageinc/generate-block-for-testing/releases/download/v0.0.1-rc.3/generateblock-alpine3_14.gz \
   && gunzip generateblock-alpine3_14.gz \
   && mv generateblock-alpine3_14 generateblock
 
