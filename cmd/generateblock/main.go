@@ -22,6 +22,7 @@ func logInit() *zap.Logger {
 	logOpts := make([]zap.Option, 0, 1)
 	logConf := zap.NewProductionConfig()
 	logConf.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	logConf.EncoderConfig.TimeKey = "timestamp"
 	logConf.EncoderConfig.LevelKey = "status"
 	if argObj.Logging {
 		logConf.Level = zap.NewAtomicLevelAt(zapcore.DebugLevel)
