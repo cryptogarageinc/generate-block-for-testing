@@ -20,6 +20,15 @@ func (n NetworkType) String() string {
 	return string(n)
 }
 
+func (n NetworkType) IsElements() bool {
+	switch n {
+	case LiquidV1, ElementsRegtest:
+		return true
+	default:
+		return false
+	}
+}
+
 func NewNetworkType(network string) NetworkType {
 	switch strings.ToLower(network) {
 	case Mainnet.String(), Testnet.String(), Regtest.String(), LiquidV1.String():
@@ -49,7 +58,7 @@ type Configuration struct {
 }
 
 func (c *Configuration) CanDynafed() bool {
-	if c.FedpegScript != "" && len(c.PakEntries) > 0 {
+	if c.Network.IsElements() && c.FedpegScript != "" && len(c.PakEntries) > 0 {
 		return true
 	}
 	return false
