@@ -12,4 +12,4 @@ RUN chmod +x /opt/generateblock/generateblock
 
 ENV PATH $PATH:/opt/generateblock
 
-CMD generateblock -h
+CMD ["generateblock", "-h"]
