@@ -13,3 +13,8 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+/generateblock.exe
+/generateblock
+/tests/bitcoind_datadir
+/tests/elementsd_datadir

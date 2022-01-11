@@ -1,0 +1,12 @@
+[dev-packages]
+autopep8 = "*"
+flake8 = "*"
+
+[packages]
+python-bitcoinrpc = "*"
+
+[scripts]
+format = "autopep8 --aggressive --aggressive -ir setup.py cfd tests"
+format_detail = "autopep8 --aggressive --aggressive -ivr setup.py cfd tests"
+format_check = "autopep8 -d -r setup.py src"
+lint = "flake8 --show-source setup.py cfd tests"
