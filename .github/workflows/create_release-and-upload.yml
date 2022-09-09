@@ -157,6 +157,7 @@ jobs:
         entrypoint: /github/workspace/.github/workflows/docker/alpine_build_entrypoint.sh
     - name: create archive file
       run: |
+        mv generateblock-alpine ${FILENAME}
         gzip ${FILENAME}
         echo "---- dump gzip file ----"
         ls -l generateblock*
@@ -193,6 +194,7 @@ jobs:
         entrypoint: /github/workspace/.github/workflows/docker/alpine_build_entrypoint.sh
     - name: create archive file
       run: |
+        mv generateblock-alpine ${FILENAME}
         gzip ${FILENAME}
         echo "---- dump gzip file ----"
         ls -l generateblock*
@@ -229,6 +231,7 @@ jobs:
         entrypoint: /github/workspace/.github/workflows/docker/alpine_build_entrypoint.sh
     - name: create archive file
       run: |
+        mv generateblock-alpine ${FILENAME}
         gzip ${FILENAME}
         echo "---- dump gzip file ----"
         ls -l generateblock*
