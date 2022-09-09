@@ -1,4 +1,4 @@
-name: sprint pre-merge check
+name: pre-merge check
 
 on: 
   push:
