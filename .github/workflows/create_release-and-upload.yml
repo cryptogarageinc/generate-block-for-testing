@@ -11,7 +11,7 @@ env:
 jobs:
   create_releases:
     name: create-releases
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     outputs:
       release_url: ${{ steps.output_url.outputs.upload_url }}
 
@@ -140,7 +140,7 @@ jobs:
   upload-object-alpine-3-14:
     name: upload-object-alpine-3.14
     needs: create_releases
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env:
       FILENAME: "generateblock-alpine3_14"
     steps:
@@ -153,6 +153,78 @@ jobs:
       run: ls -a $GITHUB_WORKSPACE
     - name: docker setup
       uses: docker://golang:1.16-alpine3.14
+      with:
+        entrypoint: /github/workspace/.github/workflows/docker/alpine_build_entrypoint.sh
+    - name: create archive file
+      run: |
+        gzip ${FILENAME}
+        echo "---- dump gzip file ----"
+        ls -l generateblock*
+    - name: output url
+      id: get_url
+      run: echo "::set-output name=upload_url::${{ needs.create_releases.outputs.release_url }}"
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_url.outputs.upload_url }}
+        asset_path: ./${{ env.FILENAME }}.gz
+        asset_name: ${{ env.FILENAME }}}.gz
+        asset_content_type: application/gzip
+
+  upload-object-alpine-3-15:
+    name: upload-object-alpine-3.15
+    needs: create_releases
+    runs-on: ubuntu-20.04
+    env:
+      FILENAME: "generateblock-alpine3_15"
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: list
+      run: ls -a $GITHUB_WORKSPACE
+    - name: docker setup
+      uses: docker://golang:1.18-alpine3.15
+      with:
+        entrypoint: /github/workspace/.github/workflows/docker/alpine_build_entrypoint.sh
+    - name: create archive file
+      run: |
+        gzip ${FILENAME}
+        echo "---- dump gzip file ----"
+        ls -l generateblock*
+    - name: output url
+      id: get_url
+      run: echo "::set-output name=upload_url::${{ needs.create_releases.outputs.release_url }}"
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_url.outputs.upload_url }}
+        asset_path: ./${{ env.FILENAME }}.gz
+        asset_name: ${{ env.FILENAME }}}.gz
+        asset_content_type: application/gzip
+
+  upload-object-alpine-3-16:
+    name: upload-object-alpine-3.16
+    needs: create_releases
+    runs-on: ubuntu-20.04
+    env:
+      FILENAME: "generateblock-alpine3_16"
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: list
+      run: ls -a $GITHUB_WORKSPACE
+    - name: docker setup
+      uses: docker://golang:1.18-alpine3.16
       with:
         entrypoint: /github/workspace/.github/workflows/docker/alpine_build_entrypoint.sh
     - name: create archive file
