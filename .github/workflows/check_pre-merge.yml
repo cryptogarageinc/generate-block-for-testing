@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: build image
       run: docker compose build generateblock-bitcoin generateblock-elements
     - name: start bitcoin and elements
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: build image
       run: docker compose build generateblock-bin-bitcoin generateblock-bin-elements
     - name: start bitcoin and elements
