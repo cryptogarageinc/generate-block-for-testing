@@ -84,3 +84,9 @@ make build
 ```sh
 make gettools format
 ```
+
+## use library
+
+```go
+import gb "github.com/cryptogarageinc/generate-block-for-testing"
+```

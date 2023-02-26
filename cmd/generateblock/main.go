@@ -5,6 +5,7 @@ import (
 
 	arg "github.com/alexflint/go-arg"
 	env "github.com/caarlos0/env/v6"
+	"github.com/cryptogarageinc/generate-block-for-testing/internal/domain/model"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -55,13 +56,21 @@ func main() {
 		logError("Error while validate argument", err)
 		return
 	}
-	config := argObj.ToConfigurationModel()
 
-	// dedpendency
+	var network string
+	if argObj.Network != "" {
+		network = argObj.Network
+	} else {
+		network = model.ElementsRegtest.String()
+		logger.Debug("set: default network elementsRegTest")
+	}
+
+	// dependency
 	handle := NewHandler(argObj)
 
 	// execute
-	if err := handle.GenerateBlock(ctx, config); err != nil {
+	if err := handle.GenerateBlock(
+		ctx, network, argObj.FedpegScript, argObj.Pak, argObj.Address); err != nil {
 		logError("GenerateBlock fail", err)
 	}
 	logger.Debug("end")
