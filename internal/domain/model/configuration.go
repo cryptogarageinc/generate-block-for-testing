@@ -45,7 +45,7 @@ func ValidateNetworkType(network string) error {
 	case Mainnet.String(), Testnet.String(), Regtest.String(), LiquidV1.String():
 	case ElementsRegtest.String(), "liquidregtest":
 	default:
-		return errors.New("no match network type")
+		return errors.Errorf("no match network type, %s", network)
 	}
 	return nil
 }

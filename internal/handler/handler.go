@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 
 	"github.com/cryptogarageinc/generate-block-for-testing/internal/domain/model"
 	"github.com/cryptogarageinc/generate-block-for-testing/internal/usecase"
@@ -10,7 +11,10 @@ import (
 type Handler interface {
 	GenerateBlock(
 		ctx context.Context,
-		config *model.Configuration,
+		networkType string,
+		fedpegScript string,
+		pak []string,
+		address string,
 	) error
 }
 
@@ -20,9 +24,23 @@ type handler struct {
 
 func (h *handler) GenerateBlock(
 	ctx context.Context,
-	config *model.Configuration,
+	networkType string,
+	fedpegScript string,
+	pak []string,
+	address string,
 ) error {
-	return h.usecase.GenerateBlock(ctx, config)
+	if networkType == "" {
+		return errors.New("networkType is empty")
+	}
+	if err := model.ValidateNetworkType(networkType); err != nil {
+		return err
+	}
+	return h.usecase.GenerateBlock(ctx, &model.Configuration{
+		Network:      model.NewNetworkType(networkType),
+		FedpegScript: fedpegScript,
+		PakEntries:   pak,
+		Address:      address,
+	})
 }
 
 func NewHandler(usecase usecase.GenerateBlock) Handler {

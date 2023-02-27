@@ -1,11 +1,5 @@
 package main
 
-import (
-	"fmt"
-
-	"github.com/cryptogarageinc/generate-block-for-testing/internal/domain/model"
-)
-
 type ArgError string
 
 const (
@@ -56,26 +50,5 @@ func (a *argument) Validate() error {
 	if a.Host == "" {
 		return ErrHostName
 	}
-	if err := model.ValidateNetworkType(a.Network); err != nil {
-		return err
-	}
 	return nil
-}
-
-func (a *argument) ToConfigurationModel() *model.Configuration {
-	var network model.NetworkType
-	if a.Network != "" {
-		network = model.NewNetworkType(a.Network)
-	} else {
-		network = model.ElementsRegtest
-		fmt.Println("set: default network elementsRegTest")
-	}
-
-	config := &model.Configuration{
-		Network:      network,
-		FedpegScript: a.FedpegScript,
-		PakEntries:   a.Pak,
-		Address:      a.Address,
-	}
-	return config
 }
