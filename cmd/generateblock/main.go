@@ -2,10 +2,15 @@ package main
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	arg "github.com/alexflint/go-arg"
 	env "github.com/caarlos0/env/v6"
 	"github.com/cryptogarageinc/generate-block-for-testing/internal/domain/model"
+	"github.com/cryptogarageinc/generate-block-for-testing/internal/handler"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -69,11 +74,39 @@ func main() {
 	handle := NewHandler(argObj)
 
 	// execute
-	if err := handle.GenerateBlock(
-		ctx, network, argObj.FedpegScript, argObj.Pak, argObj.Address); err != nil {
-		logError("GenerateBlock fail", err)
+	if argObj.PollingTime == time.Duration(0) {
+		if err := handle.GenerateBlock(
+			ctx, network, argObj.FedpegScript, argObj.Pak, argObj.Address); err != nil {
+			logError("GenerateBlock fail", err)
+		}
+	} else {
+		// process mode
+		if err := run(handle, network, argObj.PollingTime); err != nil {
+			logError("GenerateBlock fail", err)
+		}
 	}
 	logger.Debug("end")
+}
+
+func run(handle handler.Handler, network string, pollingTime time.Duration) error {
+	ctx, stop := signal.NotifyContext(
+		context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGHUP, syscall.SIGQUIT)
+	defer stop()
+
+	ticker := time.NewTicker(pollingTime)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			logger.Debug("call GenerateBlock")
+			if err := handle.GenerateBlock(
+				ctx, network, argObj.FedpegScript, argObj.Pak, argObj.Address); err != nil {
+				logError("GenerateBlock fail", err)
+			}
+		case <-ctx.Done():
+			return nil
+		}
+	}
 }
 
 func logError(message string, err error) {
