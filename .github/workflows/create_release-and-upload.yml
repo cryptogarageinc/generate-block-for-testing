@@ -1,40 +1,16 @@
 name: create-release-upload
 
-on: 
+on:
   push:
     tags:
     - 'v*'
 
 env:
-  GO_VERSION: 1.16.x
+  GO_VERSION: "^1.18.0"
 
 jobs:
-  create_releases:
-    name: create-releases
-    runs-on: ubuntu-20.04
-
-    steps:
-    - name: checkout
-      uses: actions/checkout@v3
-    - name: Get the version
-      id: get_version
-      run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      with:
-        name: Release ${{ env.VERSION }}
-        body: |
-          Changes in this Release
-          - First Change
-          - Second Change
-        draft: false
-        prerelease: true
-      continue-on-error: true
-
-  upload-object-ubuntu:
-    name: upload-object-ubuntu
-    needs: create_releases
+  upload-object:
+    name: upload-object
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -111,7 +87,6 @@ jobs:
 
   upload-object-alpine-3-14:
     name: upload-object-alpine-3.14
-    needs: create_releases
     runs-on: ubuntu-20.04
     env:
       FILENAME: "generateblock-alpine3_14"
@@ -137,7 +112,6 @@ jobs:
 
   upload-object-alpine-3-15:
     name: upload-object-alpine-3.15
-    needs: create_releases
     runs-on: ubuntu-20.04
     env:
       FILENAME: "generateblock-alpine3_15"
@@ -163,7 +137,6 @@ jobs:
 
   upload-object-alpine-3-16:
     name: upload-object-alpine-3.16
-    needs: create_releases
     runs-on: ubuntu-20.04
     env:
       FILENAME: "generateblock-alpine3_16"
