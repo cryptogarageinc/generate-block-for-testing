@@ -41,7 +41,7 @@ services:
     command: generateblock -h
 
   testing-bitcoin:
-    image: ghcr.io/cryptogarageinc/elements-testing:v0.1.1
+    image: ghcr.io/cryptogarageinc/elements-testing:v0.2.5
     container_name: testing-bitcoin
     volumes:
       - ./:/workspace
@@ -53,7 +53,7 @@ services:
     command: /bin/bash -c "./tests/test_entrypoint_bitcoin.sh"
 
   testing-elements:
-    image: ghcr.io/cryptogarageinc/elements-testing:v0.1.1
+    image: ghcr.io/cryptogarageinc/elements-testing:v0.2.5
     container_name: testing-elements
     volumes:
       - ./:/workspace
@@ -90,8 +90,20 @@ services:
       - testing_network
     command: /bin/ash -c "./tests/test_generate_ash.sh"
 
+  generateblock-bitcoin-loop:
+    build:
+      context: .
+      dockerfile: ./docker/debian11.dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/
+    environment: *bitcoin-node-env
+    networks:
+      - testing_network
+    command: ["generateblock", "-l", "-t", "10s"]
+
   exec-test:
-    image: ghcr.io/cryptogarageinc/elements-testing:v0.1.1
+    image: ghcr.io/cryptogarageinc/elements-testing:v0.2.5
     volumes:
       - ./:/workspace
     working_dir: /workspace/
