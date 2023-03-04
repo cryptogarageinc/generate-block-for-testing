@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/cryptogarageinc/generate-block-for-testing/internal/domain/model"
 	"github.com/cryptogarageinc/generate-block-for-testing/internal/domain/repository"
 	"github.com/cryptogarageinc/generate-block-for-testing/internal/infrastructure/entity"
 	"github.com/pkg/errors"
@@ -69,6 +70,38 @@ func (b *blockchainRpc) GenerateToAddress(
 		blockHashes[i] = workBlockHashes[i].(string)
 	}
 	return blockHashes, nil
+}
+
+func (b *blockchainRpc) GetMempoolTXIDs(ctx context.Context) ([]string, error) {
+	result, _, err := b.post(ctx, "getrawmempool", false, true)
+	if err != nil {
+		return nil, err
+	}
+	rawMempoolData := result.(map[string]interface{})
+	mempoolTxIDs := rawMempoolData["txids"].([]interface{})
+	txIDs := make([]string, len(mempoolTxIDs))
+	for i := range mempoolTxIDs {
+		txIDs[i] = mempoolTxIDs[i].(string)
+	}
+	return txIDs, nil
+}
+
+func (b *blockchainRpc) GetBlockChainInfoWithElements(ctx context.Context) (*model.BlockChainInfo, error) {
+	result, _, err := b.post(ctx, "getblockchaininfo")
+	if err != nil {
+		return nil, err
+	}
+	blockchainInfo := &model.BlockChainInfo{}
+	rawBlockchainInfo := result.(map[string]interface{})
+	blockchainInfo.Blocks = uint64(rawBlockchainInfo["blocks"].(float64))
+	blockchainInfo.BestBlockHash = rawBlockchainInfo["bestblockhash"].(string)
+	blockchainInfo.CurrentFedpegScript = rawBlockchainInfo["current_fedpeg_script"].(string)
+	extensionSpace := rawBlockchainInfo["extension_space"].([]interface{})
+	blockchainInfo.ExtensionSpace = make([]string, len(extensionSpace))
+	for i := range extensionSpace {
+		blockchainInfo.ExtensionSpace[i] = extensionSpace[i].(string)
+	}
+	return blockchainInfo, nil
 }
 
 func (b *blockchainRpc) post(
@@ -136,6 +169,6 @@ func NewBlockchainRpc(
 	config.Host = host
 	return &blockchainRpc{
 		config: config,
-		cli:    resty.New().SetHostURL(host).SetDisableWarn(true), // for http
+		cli:    resty.New().SetBaseURL(host).SetDisableWarn(true), // for http
 	}
 }

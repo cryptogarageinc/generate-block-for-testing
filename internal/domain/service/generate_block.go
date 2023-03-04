@@ -13,6 +13,12 @@ type GenerateBlock interface {
 		pakEntries []string,
 	) error
 	GenerateToAddress(ctx context.Context, address string) error
+	ExistMempool(ctx context.Context) (bool, error)
+	CompareDynafed(
+		ctx context.Context,
+		fedpegScript string,
+		pakEntries []string,
+	) (bool, error)
 }
 
 const (
@@ -45,6 +51,46 @@ func (g *generateBlock) GenerateToAddress(
 	_, err := g.blockchainRepo.GenerateToAddress(ctx, 1, address)
 	// TODO(k-matsuzawa): In the future, I will make it return blockID.
 	return err
+}
+
+func (g *generateBlock) ExistMempool(
+	ctx context.Context,
+) (bool, error) {
+	txIDs, err := g.blockchainRepo.GetMempoolTXIDs(ctx)
+	if err != nil {
+		return false, err
+	}
+	return len(txIDs) > 0, nil
+}
+
+func (g *generateBlock) CompareDynafed(
+	ctx context.Context,
+	fedpegScript string,
+	pakEntries []string,
+) (bool, error) {
+	bi, err := g.blockchainRepo.GetBlockChainInfoWithElements(ctx)
+	if err != nil {
+		return false, err
+	}
+	if bi.CurrentFedpegScript != fedpegScript || !g.compareSlice(bi.ExtensionSpace, pakEntries) {
+		return false, nil
+	}
+	return true, nil
+}
+
+func (g *generateBlock) compareSlice(src []string, dst []string) bool {
+	srcMap := make(map[string]bool, len(src))
+	for _, str := range src {
+		srcMap[str] = false
+	}
+	cnt := 0
+	for _, str := range dst {
+		if exist, ok := srcMap[str]; ok && !exist {
+			srcMap[str] = true
+			cnt++
+		}
+	}
+	return cnt == len(src)
 }
 
 func NewGenerateBlock(blockchainRepo repository.Blockchain) GenerateBlock {

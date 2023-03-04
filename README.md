@@ -82,7 +82,7 @@ make build
 ### format
 
 ```sh
-make gettools format
+make format
 ```
 
 ## use library

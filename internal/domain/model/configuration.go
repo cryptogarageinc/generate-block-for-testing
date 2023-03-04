@@ -51,10 +51,11 @@ func ValidateNetworkType(network string) error {
 }
 
 type Configuration struct {
-	Network      NetworkType
-	FedpegScript string
-	PakEntries   []string
-	Address      string
+	Network            NetworkType
+	FedpegScript       string
+	PakEntries         []string
+	Address            string
+	IgnoreEmptyMempool bool
 }
 
 func (c *Configuration) CanDynafed() bool {
