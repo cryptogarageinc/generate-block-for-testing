@@ -9,15 +9,16 @@ const (
 )
 
 type argument struct {
-	Host         string        `help:"connection host & port"`
-	FedpegScript string        `arg:"-s" help:"fedpeg script on dynafed"`
-	Pak          []string      `arg:"-p,separate" help:"pak entries"`
-	Network      string        `arg:"-n" help:"network. (bitcoin:mainnet/testnet/regtest, liquid:liquidv1/liquidregtest/elementsregtest)"`
-	Address      string        `arg:"-a" help:"bitcoin address for generatetoaddress"`
-	RpcUserID    string        `help:"connection rpc userID"`
-	RpcPassword  string        `help:"connection rpc password"`
-	Logging      bool          `arg:"-l" help:"log output"`
-	PollingTime  time.Duration `arg:"-t" help:"polling duration time"`
+	Host               string        `help:"connection host & port"`
+	FedpegScript       string        `arg:"-s" help:"fedpeg script on dynafed"`
+	Pak                []string      `arg:"-p,separate" help:"pak entries"`
+	Network            string        `arg:"-n" help:"network. (bitcoin:mainnet/testnet/regtest, liquid:liquidv1/liquidregtest/elementsregtest)"`
+	Address            string        `arg:"-a" help:"bitcoin address for generatetoaddress"`
+	RpcUserID          string        `help:"connection rpc userID"`
+	RpcPassword        string        `help:"connection rpc password"`
+	Logging            bool          `arg:"-l" help:"log output"`
+	PollingTime        time.Duration `arg:"-t" help:"polling duration time"`
+	IgnoreEmptyMempool bool          `arg:"-m" help:"ignore empty mempool"`
 }
 
 // Error returns the error string.
@@ -46,6 +47,9 @@ func (a *argument) setValueFromEnvironment(env *environment) {
 	}
 	if a.RpcPassword == "" {
 		a.RpcPassword = env.RpcPassword
+	}
+	if !a.IgnoreEmptyMempool {
+		a.IgnoreEmptyMempool = env.IgnoreEmptyMempool
 	}
 }
 

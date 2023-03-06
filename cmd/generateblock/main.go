@@ -11,6 +11,7 @@ import (
 	env "github.com/caarlos0/env/v6"
 	"github.com/cryptogarageinc/generate-block-for-testing/internal/domain/model"
 	"github.com/cryptogarageinc/generate-block-for-testing/internal/handler"
+	pkgerror "github.com/cryptogarageinc/generate-block-for-testing/internal/pkg/errors"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -76,8 +77,18 @@ func main() {
 	// execute
 	if argObj.PollingTime == time.Duration(0) {
 		if err := handle.GenerateBlock(
-			ctx, network, argObj.FedpegScript, argObj.Pak, argObj.Address); err != nil {
-			logError("GenerateBlock fail", err)
+			ctx,
+			network,
+			argObj.FedpegScript,
+			argObj.Pak,
+			argObj.Address,
+			argObj.IgnoreEmptyMempool,
+		); err != nil {
+			if err == pkgerror.ErrEmptyMempoolTx {
+				logger.Debug("empty mempool tx. skip generate block.")
+			} else {
+				logError("GenerateBlock fail", err)
+			}
 		}
 	} else {
 		// process mode
@@ -100,8 +111,18 @@ func run(handle handler.Handler, network string, pollingTime time.Duration) erro
 		case <-ticker.C:
 			logger.Debug("call GenerateBlock")
 			if err := handle.GenerateBlock(
-				ctx, network, argObj.FedpegScript, argObj.Pak, argObj.Address); err != nil {
-				logError("GenerateBlock fail", err)
+				ctx,
+				network,
+				argObj.FedpegScript,
+				argObj.Pak,
+				argObj.Address,
+				argObj.IgnoreEmptyMempool,
+			); err != nil {
+				if err == pkgerror.ErrEmptyMempoolTx {
+					logger.Debug("empty mempool tx. skip generate block.")
+				} else {
+					logError("GenerateBlock fail", err)
+				}
 			}
 		case <-ctx.Done():
 			return nil

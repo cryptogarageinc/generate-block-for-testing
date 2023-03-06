@@ -15,6 +15,7 @@ type Handler interface {
 		fedpegScript string,
 		pak []string,
 		address string,
+		ignoreEmptyMempool bool,
 	) error
 }
 
@@ -28,6 +29,7 @@ func (h *handler) GenerateBlock(
 	fedpegScript string,
 	pak []string,
 	address string,
+	ignoreEmptyMempool bool,
 ) error {
 	if networkType == "" {
 		return errors.New("networkType is empty")
@@ -36,10 +38,11 @@ func (h *handler) GenerateBlock(
 		return err
 	}
 	return h.usecase.GenerateBlock(ctx, &model.Configuration{
-		Network:      model.NewNetworkType(networkType),
-		FedpegScript: fedpegScript,
-		PakEntries:   pak,
-		Address:      address,
+		Network:            model.NewNetworkType(networkType),
+		FedpegScript:       fedpegScript,
+		PakEntries:         pak,
+		Address:            address,
+		IgnoreEmptyMempool: ignoreEmptyMempool,
 	})
 }
 

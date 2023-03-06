@@ -15,6 +15,43 @@ type Connection struct {
 	RpcPassword string
 }
 
+type Generator struct {
+	handle  handler.Handler
+	network string
+
+	ignoreEmptyMempool bool
+}
+
+func NewGenerator(
+	nodeInfo *Connection,
+	network string,
+) *Generator {
+	return &Generator{
+		handle:  newHandler(nodeInfo.Host, nodeInfo.RpcUserID, nodeInfo.RpcPassword),
+		network: network,
+	}
+}
+
+func (g *Generator) WithIgnoreEmptyMempool(ignoreEmptyMempool bool) *Generator {
+	g.ignoreEmptyMempool = ignoreEmptyMempool
+	return g
+}
+
+func (g *Generator) GenerateBlock(
+	ctx context.Context,
+	address string,
+) error {
+	return g.handle.GenerateBlock(ctx, g.network, "", []string{}, address, g.ignoreEmptyMempool)
+}
+
+func (g *Generator) GenerateElementsDynafedBlock(
+	ctx context.Context,
+	fedpegScript string,
+	pakEntries []string,
+) error {
+	return g.handle.GenerateBlock(ctx, g.network, fedpegScript, pakEntries, "", g.ignoreEmptyMempool)
+}
+
 func GenerateBlock(
 	ctx context.Context,
 	nodeInfo *Connection,
@@ -22,7 +59,7 @@ func GenerateBlock(
 	address string,
 ) error {
 	handle := newHandler(nodeInfo.Host, nodeInfo.RpcUserID, nodeInfo.RpcPassword)
-	return handle.GenerateBlock(ctx, network, "", []string{}, address)
+	return handle.GenerateBlock(ctx, network, "", []string{}, address, false)
 }
 
 func GenerateElementsDynafedBlock(
@@ -33,7 +70,7 @@ func GenerateElementsDynafedBlock(
 	pakEntries []string,
 ) error {
 	handle := newHandler(nodeInfo.Host, nodeInfo.RpcUserID, nodeInfo.RpcPassword)
-	return handle.GenerateBlock(ctx, network, fedpegScript, pakEntries, "")
+	return handle.GenerateBlock(ctx, network, fedpegScript, pakEntries, "", false)
 }
 
 func newHandler(

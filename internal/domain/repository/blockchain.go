@@ -1,6 +1,10 @@
 package repository
 
-import "context"
+import (
+	"context"
+
+	"github.com/cryptogarageinc/generate-block-for-testing/internal/domain/model"
+)
 
 type Blockchain interface {
 	GetNewBlockHex(
@@ -20,4 +24,8 @@ type Blockchain interface {
 		blockCount int,
 		address string,
 	) (blockHashes []string, err error)
+	GetMempoolTXIDs(ctx context.Context) ([]string, error)
+	GetBlockChainInfoWithElements(
+		ctx context.Context,
+	) (*model.BlockChainInfo, error)
 }

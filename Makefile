@@ -2,16 +2,13 @@
 
 current_dir = $(shell pwd)
 
-all: gettools generate format build
-
-gettools:
-	go install golang.org/x/tools/cmd/goimports@v0.1.5
+all: generate format build
 
 generate:
 	go generate ./...
 
 format:
-	goimports -w .
+	go run golang.org/x/tools/cmd/goimports@v0.6.0 -w .
 	go mod tidy
 
 download:
