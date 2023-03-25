@@ -8,8 +8,14 @@ generate:
 	go generate ./...
 
 format:
-	go run golang.org/x/tools/cmd/goimports@v0.6.0 -w .
+	go run golang.org/x/tools/cmd/goimports@v0.7.0 -w .
 	go mod tidy
+
+lint:
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.1 run
+
+lint-fix:
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.1 run --fix
 
 download:
 	go mod download
