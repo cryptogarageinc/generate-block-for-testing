@@ -40,16 +40,18 @@ func (g *Generator) WithIgnoreEmptyMempool(ignoreEmptyMempool bool) *Generator {
 func (g *Generator) GenerateBlock(
 	ctx context.Context,
 	address string,
+	generateCount uint,
 ) error {
-	return g.handle.GenerateBlock(ctx, g.network, "", []string{}, address, g.ignoreEmptyMempool)
+	return g.handle.GenerateBlock(ctx, g.network, "", []string{}, address, generateCount, g.ignoreEmptyMempool)
 }
 
 func (g *Generator) GenerateElementsDynafedBlock(
 	ctx context.Context,
 	fedpegScript string,
 	pakEntries []string,
+	generateCount uint,
 ) error {
-	return g.handle.GenerateBlock(ctx, g.network, fedpegScript, pakEntries, "", g.ignoreEmptyMempool)
+	return g.handle.GenerateBlock(ctx, g.network, fedpegScript, pakEntries, "", generateCount, g.ignoreEmptyMempool)
 }
 
 func GenerateBlock(
@@ -57,9 +59,10 @@ func GenerateBlock(
 	nodeInfo *Connection,
 	network string,
 	address string,
+	generateCount uint,
 ) error {
 	handle := newHandler(nodeInfo.Host, nodeInfo.RpcUserID, nodeInfo.RpcPassword)
-	return handle.GenerateBlock(ctx, network, "", []string{}, address, false)
+	return handle.GenerateBlock(ctx, network, "", []string{}, address, generateCount, false)
 }
 
 func GenerateElementsDynafedBlock(
@@ -68,9 +71,10 @@ func GenerateElementsDynafedBlock(
 	network string,
 	fedpegScript string,
 	pakEntries []string,
+	generateCount uint,
 ) error {
 	handle := newHandler(nodeInfo.Host, nodeInfo.RpcUserID, nodeInfo.RpcPassword)
-	return handle.GenerateBlock(ctx, network, fedpegScript, pakEntries, "", false)
+	return handle.GenerateBlock(ctx, network, fedpegScript, pakEntries, "", generateCount, false)
 }
 
 func newHandler(

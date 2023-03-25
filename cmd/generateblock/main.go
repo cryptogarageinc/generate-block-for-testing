@@ -82,6 +82,7 @@ func main() {
 			argObj.FedpegScript,
 			argObj.Pak,
 			argObj.Address,
+			argObj.GenerateCount,
 			argObj.IgnoreEmptyMempool,
 		); err != nil {
 			if err == pkgerror.ErrEmptyMempoolTx {
@@ -96,7 +97,7 @@ func main() {
 			logError("GenerateBlock fail", err)
 		}
 	}
-	logger.Debug("end")
+	logger.Debug("end", zap.Uint("generateCount", argObj.GenerateCount))
 }
 
 func run(handle handler.Handler, network string, pollingTime time.Duration) error {
@@ -116,6 +117,7 @@ func run(handle handler.Handler, network string, pollingTime time.Duration) erro
 				argObj.FedpegScript,
 				argObj.Pak,
 				argObj.Address,
+				argObj.GenerateCount,
 				argObj.IgnoreEmptyMempool,
 			); err != nil {
 				if err == pkgerror.ErrEmptyMempoolTx {
