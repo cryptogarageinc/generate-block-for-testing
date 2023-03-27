@@ -55,7 +55,15 @@ type Configuration struct {
 	FedpegScript       string
 	PakEntries         []string
 	Address            string
+	GenerateCount      uint
 	IgnoreEmptyMempool bool
+}
+
+func (c *Configuration) GetGenerateCount() uint {
+	if c.GenerateCount > 0 {
+		return c.GenerateCount
+	}
+	return 1
 }
 
 func (c *Configuration) CanDynafed() bool {

@@ -1,0 +1,10 @@
+run:
+  deadline: 30m
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - exportloopref
+    - goimports
+  disable:
+    - structcheck

@@ -42,16 +42,25 @@ func (g *generateBlock) GenerateBlock(
 			// need to generate block.
 		}
 	}
-	if config.CanDynafed() {
-		return g.generateBlockService.GenerateDynafedBlock(
-			ctx,
-			config.FedpegScript,
-			config.PakEntries)
+
+	var err error
+	for i := uint(0); i < config.GetGenerateCount(); i++ {
+		switch {
+		case config.CanDynafed():
+			err = g.generateBlockService.GenerateDynafedBlock(
+				ctx,
+				config.FedpegScript,
+				config.PakEntries)
+		case config.Address == "":
+			err = errors.Errorf("address is not set")
+		default:
+			err = g.generateBlockService.GenerateToAddress(ctx, config.Address)
+		}
+		if err != nil {
+			break
+		}
 	}
-	if config.Address == "" {
-		return errors.Errorf("address is not set")
-	}
-	return g.generateBlockService.GenerateToAddress(ctx, config.Address)
+	return err
 }
 
 func NewGenerateBlock(

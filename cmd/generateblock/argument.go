@@ -18,6 +18,7 @@ type argument struct {
 	RpcPassword        string        `help:"connection rpc password"`
 	Logging            bool          `arg:"-l" help:"log output"`
 	PollingTime        time.Duration `arg:"-t" help:"polling duration time"`
+	GenerateCount      uint          `arg:"-c" help:"generate count"`
 	IgnoreEmptyMempool bool          `arg:"-m" help:"ignore empty mempool"`
 }
 
@@ -47,6 +48,9 @@ func (a *argument) setValueFromEnvironment(env *environment) {
 	}
 	if a.RpcPassword == "" {
 		a.RpcPassword = env.RpcPassword
+	}
+	if a.GenerateCount == 0 {
+		a.GenerateCount = env.GenerateCount
 	}
 	if !a.IgnoreEmptyMempool {
 		a.IgnoreEmptyMempool = env.IgnoreEmptyMempool

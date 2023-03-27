@@ -8,5 +8,6 @@ type environment struct {
 	Address            string   `env:"GENERATE_BLOCK_GENERATETOADDRESS"`
 	RpcUserID          string   `env:"CONNECTION_PRC_USERID"`
 	RpcPassword        string   `env:"CONNECTION_PRC_PASSWORD"`
+	GenerateCount      uint     `env:"GENERATE_BLOCK_COUNT" envDefault:"1"`
 	IgnoreEmptyMempool bool     `env:"IGNORE_EMPTY_MEMPOOL"`
 }

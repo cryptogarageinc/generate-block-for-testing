@@ -1,6 +1,6 @@
 name: pre-merge check
 
-on: 
+on:
   push:
     branches:
     - master
@@ -10,10 +10,9 @@ on:
     - feature/ci*
     paths-ignore:
     - 'README.md'
+    - 'LICENSE'
     - '*.dockerfile'
     - '*.json'
-    - 'LICENSE'
-    - 'pc/**'
   pull_request:
     branches:
     - master
@@ -21,7 +20,24 @@ on:
     - develop
     - features/sprint*
 
+env:
+  go-version: '^1.20'
+
 jobs:
+  check:
+    name: check
+    runs-on: ubuntu-22.04
+    steps:
+    - name: setup go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ${{ env.go-version }}
+    - uses: actions/checkout@v3
+    - name: build image
+      run: make build
+    - name: golangci-lint
+      uses: reviewdog/action-golangci-lint@v2
+
   test-by-build:
     name: build and test
     runs-on: ubuntu-20.04

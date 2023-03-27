@@ -15,6 +15,7 @@ type Handler interface {
 		fedpegScript string,
 		pak []string,
 		address string,
+		generateCount uint,
 		ignoreEmptyMempool bool,
 	) error
 }
@@ -29,6 +30,7 @@ func (h *handler) GenerateBlock(
 	fedpegScript string,
 	pak []string,
 	address string,
+	generateCount uint,
 	ignoreEmptyMempool bool,
 ) error {
 	if networkType == "" {
@@ -42,6 +44,7 @@ func (h *handler) GenerateBlock(
 		FedpegScript:       fedpegScript,
 		PakEntries:         pak,
 		Address:            address,
+		GenerateCount:      generateCount,
 		IgnoreEmptyMempool: ignoreEmptyMempool,
 	})
 }
