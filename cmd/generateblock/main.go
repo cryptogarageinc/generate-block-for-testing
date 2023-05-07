@@ -84,6 +84,7 @@ func main() {
 			argObj.Address,
 			argObj.GenerateCount,
 			argObj.IgnoreEmptyMempool,
+			argObj.HasCheckInitialBlkDl,
 		); err != nil {
 			if err == pkgerror.ErrEmptyMempoolTx {
 				logger.Debug("empty mempool tx. skip generate block.")
@@ -119,6 +120,7 @@ func run(handle handler.Handler, network string, pollingTime time.Duration) erro
 				argObj.Address,
 				argObj.GenerateCount,
 				argObj.IgnoreEmptyMempool,
+				argObj.HasCheckInitialBlkDl,
 			); err != nil {
 				if err == pkgerror.ErrEmptyMempoolTx {
 					logger.Debug("empty mempool tx. skip generate block.")
