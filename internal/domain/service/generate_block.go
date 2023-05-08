@@ -14,11 +14,12 @@ type GenerateBlock interface {
 	) error
 	GenerateToAddress(ctx context.Context, address string) error
 	ExistMempool(ctx context.Context) (bool, error)
+	IsInitialBlockDownload(ctx context.Context) (bool, error)
 	CompareDynafed(
 		ctx context.Context,
 		fedpegScript string,
 		pakEntries []string,
-	) (bool, error)
+	) (bool, bool, error)
 }
 
 const (
@@ -63,19 +64,29 @@ func (g *generateBlock) ExistMempool(
 	return len(txIDs) > 0, nil
 }
 
+func (g *generateBlock) IsInitialBlockDownload(
+	ctx context.Context,
+) (bool, error) {
+	bi, err := g.blockchainRepo.GetBlockChainInfo(ctx)
+	if err != nil {
+		return false, err
+	}
+	return bi.IsInitialBlockDownload, nil
+}
+
 func (g *generateBlock) CompareDynafed(
 	ctx context.Context,
 	fedpegScript string,
 	pakEntries []string,
-) (bool, error) {
-	bi, err := g.blockchainRepo.GetBlockChainInfoWithElements(ctx)
+) (bool, bool, error) {
+	bi, err := g.blockchainRepo.GetBlockChainInfo(ctx)
 	if err != nil {
-		return false, err
+		return false, false, err
 	}
 	if bi.CurrentFedpegScript != fedpegScript || !g.compareSlice(bi.ExtensionSpace, pakEntries) {
-		return false, nil
+		return false, bi.IsInitialBlockDownload, nil
 	}
-	return true, nil
+	return true, bi.IsInitialBlockDownload, nil
 }
 
 func (g *generateBlock) compareSlice(src []string, dst []string) bool {

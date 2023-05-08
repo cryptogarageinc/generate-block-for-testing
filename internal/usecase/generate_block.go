@@ -30,14 +30,29 @@ func (g *generateBlock) GenerateBlock(
 		case err != nil:
 			return err
 		case !exist && !config.CanDynafed():
-			return pkgerror.ErrEmptyMempoolTx
+			if config.HasCheckInitialBlkDl {
+				isInitialBlkDl, err := g.generateBlockService.IsInitialBlockDownload(ctx)
+				if err != nil {
+					return err
+				} else if isInitialBlkDl {
+					// need to generate block
+				} else {
+					return pkgerror.ErrEmptyMempoolTx
+				}
+			} else {
+				return pkgerror.ErrEmptyMempoolTx
+			}
 		case !exist && config.CanDynafed():
-			compare, err := g.generateBlockService.CompareDynafed(
+			compare, isInitialBlkDl, err := g.generateBlockService.CompareDynafed(
 				ctx, config.FedpegScript, config.PakEntries)
 			if err != nil {
 				return err
 			} else if compare {
-				return pkgerror.ErrEmptyMempoolTx
+				if config.HasCheckInitialBlkDl && isInitialBlkDl {
+					// need to generate block
+				} else {
+					return pkgerror.ErrEmptyMempoolTx
+				}
 			}
 			// need to generate block.
 		}

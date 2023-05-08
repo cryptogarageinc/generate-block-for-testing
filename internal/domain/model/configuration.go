@@ -51,12 +51,13 @@ func ValidateNetworkType(network string) error {
 }
 
 type Configuration struct {
-	Network            NetworkType
-	FedpegScript       string
-	PakEntries         []string
-	Address            string
-	GenerateCount      uint
-	IgnoreEmptyMempool bool
+	Network              NetworkType
+	FedpegScript         string
+	PakEntries           []string
+	Address              string
+	GenerateCount        uint
+	IgnoreEmptyMempool   bool
+	HasCheckInitialBlkDl bool // check the initialblockdownload
 }
 
 func (c *Configuration) GetGenerateCount() uint {

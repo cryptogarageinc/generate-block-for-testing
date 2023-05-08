@@ -25,7 +25,7 @@ type Blockchain interface {
 		address string,
 	) (blockHashes []string, err error)
 	GetMempoolTXIDs(ctx context.Context) ([]string, error)
-	GetBlockChainInfoWithElements(
+	GetBlockChainInfo(
 		ctx context.Context,
 	) (*model.BlockChainInfo, error)
 }

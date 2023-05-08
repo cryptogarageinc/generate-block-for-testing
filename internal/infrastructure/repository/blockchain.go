@@ -86,7 +86,7 @@ func (b *blockchainRpc) GetMempoolTXIDs(ctx context.Context) ([]string, error) {
 	return txIDs, nil
 }
 
-func (b *blockchainRpc) GetBlockChainInfoWithElements(ctx context.Context) (*model.BlockChainInfo, error) {
+func (b *blockchainRpc) GetBlockChainInfo(ctx context.Context) (*model.BlockChainInfo, error) {
 	result, _, err := b.post(ctx, "getblockchaininfo")
 	if err != nil {
 		return nil, err
@@ -95,11 +95,15 @@ func (b *blockchainRpc) GetBlockChainInfoWithElements(ctx context.Context) (*mod
 	rawBlockchainInfo := result.(map[string]interface{})
 	blockchainInfo.Blocks = uint64(rawBlockchainInfo["blocks"].(float64))
 	blockchainInfo.BestBlockHash = rawBlockchainInfo["bestblockhash"].(string)
-	blockchainInfo.CurrentFedpegScript = rawBlockchainInfo["current_fedpeg_script"].(string)
-	extensionSpace := rawBlockchainInfo["extension_space"].([]interface{})
-	blockchainInfo.ExtensionSpace = make([]string, len(extensionSpace))
-	for i := range extensionSpace {
-		blockchainInfo.ExtensionSpace[i] = extensionSpace[i].(string)
+	blockchainInfo.IsInitialBlockDownload = rawBlockchainInfo["initialblockdownload"].(bool)
+
+	if rawBlockchainInfo["current_fedpeg_script"] != nil {
+		blockchainInfo.CurrentFedpegScript = rawBlockchainInfo["current_fedpeg_script"].(string)
+		extensionSpace := rawBlockchainInfo["extension_space"].([]interface{})
+		blockchainInfo.ExtensionSpace = make([]string, len(extensionSpace))
+		for i := range extensionSpace {
+			blockchainInfo.ExtensionSpace[i] = extensionSpace[i].(string)
+		}
 	}
 	return blockchainInfo, nil
 }

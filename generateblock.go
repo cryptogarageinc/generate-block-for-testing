@@ -19,7 +19,8 @@ type Generator struct {
 	handle  handler.Handler
 	network string
 
-	ignoreEmptyMempool bool
+	ignoreEmptyMempool   bool
+	hasCheckInitialBlkDl bool
 }
 
 func NewGenerator(
@@ -37,12 +38,19 @@ func (g *Generator) WithIgnoreEmptyMempool(ignoreEmptyMempool bool) *Generator {
 	return g
 }
 
+func (g *Generator) WithCheckInitialBlockDownload(hasCheckInitialBlkDl bool) *Generator {
+	g.hasCheckInitialBlkDl = hasCheckInitialBlkDl
+	return g
+}
+
 func (g *Generator) GenerateBlock(
 	ctx context.Context,
 	address string,
 	generateCount uint,
 ) error {
-	return g.handle.GenerateBlock(ctx, g.network, "", []string{}, address, generateCount, g.ignoreEmptyMempool)
+	return g.handle.GenerateBlock(
+		ctx, g.network, "", []string{}, address, generateCount,
+		g.ignoreEmptyMempool, g.hasCheckInitialBlkDl)
 }
 
 func (g *Generator) GenerateElementsDynafedBlock(
@@ -51,7 +59,9 @@ func (g *Generator) GenerateElementsDynafedBlock(
 	pakEntries []string,
 	generateCount uint,
 ) error {
-	return g.handle.GenerateBlock(ctx, g.network, fedpegScript, pakEntries, "", generateCount, g.ignoreEmptyMempool)
+	return g.handle.GenerateBlock(
+		ctx, g.network, fedpegScript, pakEntries, "", generateCount,
+		g.ignoreEmptyMempool, g.hasCheckInitialBlkDl)
 }
 
 func GenerateBlock(
@@ -62,7 +72,8 @@ func GenerateBlock(
 	generateCount uint,
 ) error {
 	handle := newHandler(nodeInfo.Host, nodeInfo.RpcUserID, nodeInfo.RpcPassword)
-	return handle.GenerateBlock(ctx, network, "", []string{}, address, generateCount, false)
+	return handle.GenerateBlock(ctx, network, "", []string{}, address,
+		generateCount, false, false)
 }
 
 func GenerateElementsDynafedBlock(
@@ -74,7 +85,8 @@ func GenerateElementsDynafedBlock(
 	generateCount uint,
 ) error {
 	handle := newHandler(nodeInfo.Host, nodeInfo.RpcUserID, nodeInfo.RpcPassword)
-	return handle.GenerateBlock(ctx, network, fedpegScript, pakEntries, "", generateCount, false)
+	return handle.GenerateBlock(ctx, network, fedpegScript, pakEntries, "",
+		generateCount, false, false)
 }
 
 func newHandler(
