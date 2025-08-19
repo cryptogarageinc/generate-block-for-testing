@@ -45,7 +45,7 @@ jobs:
 
     steps:
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
     - name: setup go
       uses: actions/setup-go@v3
       with:
@@ -92,7 +92,7 @@ jobs:
       FILENAME: "generateblock-alpine3_14"
     steps:
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
     - name: list
       run: ls -a $GITHUB_WORKSPACE
     - name: docker setup
@@ -117,7 +117,7 @@ jobs:
       FILENAME: "generateblock-alpine3_15"
     steps:
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
     - name: list
       run: ls -a $GITHUB_WORKSPACE
     - name: docker setup
@@ -142,7 +142,7 @@ jobs:
       FILENAME: "generateblock-alpine3_16"
     steps:
     - name: checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
     - name: list
       run: ls -a $GITHUB_WORKSPACE
     - name: docker setup

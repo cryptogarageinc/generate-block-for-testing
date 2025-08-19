@@ -32,7 +32,7 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: ${{ env.go-version }}
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     - name: build image
       run: make build
     - name: golangci-lint
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     - name: build image
       run: docker compose build generateblock-bitcoin generateblock-elements
     - name: start bitcoin and elements
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     - name: build image
       run: docker compose build generateblock-bin-bitcoin generateblock-bin-elements
     - name: start bitcoin and elements
