@@ -18,26 +18,26 @@ x-elements-node-env: &elements-node-env
   GENERATE_BLOCK_COUNT: 1
 
 services:
-  alpine-3.14:
+  alpine-3.22:
     build:
       context: .
-      dockerfile: ./docker/alpine3_14.dockerfile
+      dockerfile: ./docker/alpine3_22.dockerfile
     volumes:
       - .:/workspace
     command: generateblock -h
 
-  debian-10:
+  debian-12:
     build:
       context: .
-      dockerfile: ./docker/debian10.dockerfile
+      dockerfile: ./docker/debian12.dockerfile
     volumes:
       - .:/workspace
     command: generateblock -h
 
-  debian-11:
+  debian-13:
     build:
       context: .
-      dockerfile: ./docker/debian11.dockerfile
+      dockerfile: ./docker/debian13.dockerfile
     volumes:
       - .:/workspace
     command: generateblock -h
@@ -71,7 +71,7 @@ services:
   generateblock-bitcoin:
     build:
       context: .
-      dockerfile: ./docker/debian11.dockerfile
+      dockerfile: ./docker/debian13.dockerfile
     volumes:
       - .:/workspace
     working_dir: /workspace/
@@ -83,7 +83,7 @@ services:
   generateblock-elements:
     build:
       context: .
-      dockerfile: ./docker/alpine3_14.dockerfile
+      dockerfile: ./docker/alpine3_22.dockerfile
     volumes:
       - .:/workspace
     working_dir: /workspace/
@@ -95,7 +95,7 @@ services:
   generateblock-bitcoin-loop:
     build:
       context: .
-      dockerfile: ./docker/debian11.dockerfile
+      dockerfile: ./docker/debian13.dockerfile
     volumes:
       - .:/workspace
     working_dir: /workspace/
@@ -107,7 +107,7 @@ services:
   generateblock-elements-loop:
     build:
       context: .
-      dockerfile: ./docker/debian11.dockerfile
+      dockerfile: ./docker/debian13.dockerfile
     volumes:
       - .:/workspace
     working_dir: /workspace/
@@ -128,7 +128,7 @@ services:
   generateblock-bin-bitcoin:
     build:
       context: .
-      dockerfile: ./tests/testing_debian11.dockerfile
+      dockerfile: ./tests/testing_debian13.dockerfile
     volumes:
       - .:/workspace
     working_dir: /workspace/
@@ -140,7 +140,7 @@ services:
   generateblock-bin-elements:
     build:
       context: .
-      dockerfile: ./tests/testing_alpine3_14.dockerfile
+      dockerfile: ./tests/testing_alpine3_22.dockerfile
     volumes:
       - .:/workspace
     working_dir: /workspace/
