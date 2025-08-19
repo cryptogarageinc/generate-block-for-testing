@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine3.14 as builder
+FROM golang:1.24-alpine3.22 as builder
 
 WORKDIR /workspace
 
@@ -6,7 +6,7 @@ COPY ./ ./
 
 RUN go mod download && go install -ldflags "-s -w" ./cmd/generateblock/ && ls -l /go/bin/
 
-FROM alpine:3.14 as server
+FROM alpine:3.22 as server
 
 RUN apk add --no-cache libstdc++
 

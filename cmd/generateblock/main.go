@@ -8,7 +8,7 @@ import (
 	"time"
 
 	arg "github.com/alexflint/go-arg"
-	env "github.com/caarlos0/env/v6"
+	env "github.com/caarlos0/env/v11"
 	"github.com/cryptogarageinc/generate-block-for-testing/internal/domain/model"
 	"github.com/cryptogarageinc/generate-block-for-testing/internal/handler"
 	pkgerror "github.com/cryptogarageinc/generate-block-for-testing/internal/pkg/errors"

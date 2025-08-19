@@ -3,71 +3,86 @@ name: pre-merge check
 on:
   push:
     branches:
-    - master
-    - main
-    - develop
-    - features/sprint*
-    - feature/ci*
+      - master
+      - main
+      - develop
+      - features/sprint*
+      - feature/ci*
     paths-ignore:
-    - 'README.md'
-    - 'LICENSE'
-    - '*.dockerfile'
-    - '*.json'
+      - 'README.md'
+      - 'LICENSE'
+      - '*.dockerfile'
+      - '*.json'
   pull_request:
     branches:
-    - master
-    - main
-    - develop
-    - features/sprint*
+      - master
+      - main
+      - develop
+      - features/sprint*
 
 env:
-  go-version: '^1.20'
+  go-version: '^1.25'
 
 jobs:
   check:
     name: check
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    timeout-minutes: 10
     steps:
-    - name: setup go
-      uses: actions/setup-go@v3
-      with:
-        go-version: ${{ env.go-version }}
-    - uses: actions/checkout@v3
-    - name: build image
-      run: make build
-    - name: golangci-lint
-      uses: reviewdog/action-golangci-lint@v2
+      - name: setup go
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: ${{ env.go-version }}
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: 'false'
+      - name: build image
+        run: make build
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@f9bba13753278f6a73b27a56a3ffb1bfda90ed71 # v2.8.0
 
   test-by-build:
     name: build and test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    timeout-minutes: 10
 
     steps:
-    - uses: actions/checkout@v3
-    - name: build image
-      run: docker compose build generateblock-bitcoin generateblock-elements
-    - name: start bitcoin and elements
-      run: docker compose up -d testing-bitcoin testing-elements
-    - name: start generateblock
-      run: docker compose up -d generateblock-bitcoin generateblock-elements
-    - name: test
-      run: docker compose up exec-test
-    - name: stop
-      run: docker compose down
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: 'false'
+      - name: build image
+        run: docker compose build generateblock-bitcoin generateblock-elements
+      - name: start bitcoin and elements
+        run: docker compose up -d testing-bitcoin testing-elements
+      - name: start generateblock
+        run: docker compose up -d generateblock-bitcoin generateblock-elements
+      - name: test
+        run: docker compose up exec-test
+      - name: stop
+        run: docker compose down
 
   test-by-binary:
     name: binary test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    timeout-minutes: 10
 
     steps:
-    - uses: actions/checkout@v3
-    - name: build image
-      run: docker compose build generateblock-bin-bitcoin generateblock-bin-elements
-    - name: start bitcoin and elements
-      run: docker compose up -d testing-bitcoin testing-elements
-    - name: start generateblock
-      run: docker compose up -d generateblock-bin-bitcoin generateblock-bin-elements
-    - name: test
-      run: docker compose up exec-test
-    - name: stop
-      run: docker compose down
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: 'false'
+      - name: build image
+        run: docker compose build generateblock-bin-bitcoin generateblock-bin-elements
+      - name: start bitcoin and elements
+        run: docker compose up -d testing-bitcoin testing-elements
+      - name: start generateblock
+        run: docker compose up -d generateblock-bin-bitcoin generateblock-bin-elements
+      - name: test
+        run: docker compose up exec-test
+      - name: stop
+        run: docker compose down

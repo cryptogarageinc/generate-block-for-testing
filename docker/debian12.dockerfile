@@ -1,4 +1,4 @@
-FROM golang:1.16-bullseye as builder
+FROM golang:1.24-bookworm as builder
 
 WORKDIR /workspace
 
@@ -6,7 +6,7 @@ COPY ./ ./
 
 RUN go mod download && go install -ldflags "-s -w" ./cmd/generateblock/ && ls -l /go/bin/
 
-FROM debian:11-slim as server
+FROM debian:12-slim as server
 
 WORKDIR /opt/generateblock
 
