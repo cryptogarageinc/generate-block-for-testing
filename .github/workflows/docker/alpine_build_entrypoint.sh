@@ -1,6 +1,10 @@
 #!/bin/sh -l
 
-cd /github/workspace/generate-block-for-testing
+export PATH=$PATH:/usr/local/go/bin
+
+go version
+
+cd /github/workspace
 
 go mod download
 
