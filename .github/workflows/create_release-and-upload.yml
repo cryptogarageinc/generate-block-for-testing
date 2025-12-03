@@ -81,12 +81,12 @@ jobs:
           ls -l generateblock*
       - name: Upload Release Asset
         if: matrix.os != 'windows'
-        uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           files: ${{ matrix.filename }}.gz
       - name: Upload Release Asset for windows
         if: matrix.os == 'windows'
-        uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           files: ${{ matrix.filename }}.zip
 
@@ -117,7 +117,7 @@ jobs:
           echo "---- dump gzip file ----"
           ls -l generateblock*
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           files: ${{ env.FILENAME }}.gz
 
@@ -148,6 +148,6 @@ jobs:
           echo "---- dump gzip file ----"
           ls -l generateblock*
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@5be0e66d93ac7ed76da52eca8bb058f665c3a5fe # v2.4.2
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           files: ${{ env.FILENAME }}.gz
