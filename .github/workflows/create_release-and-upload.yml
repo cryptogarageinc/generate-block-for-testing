@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 env:
-  GO_VERSION: "1.24.6"
+  GO_VERSION: "1.25.8"
 
 jobs:
   upload-object:
@@ -90,14 +90,14 @@ jobs:
         with:
           files: ${{ matrix.filename }}.zip
 
-  upload-object-alpine-3-21:
-    name: upload-object-alpine-3.21
+  upload-object-alpine-3-23:
+    name: upload-object-alpine-3.23
     runs-on: ubuntu-24.04
     permissions:
       contents: write
     timeout-minutes: 10
     env:
-      FILENAME: "generateblock-alpine3_21"
+      FILENAME: "generateblock-alpine3_23"
     steps:
       - name: checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -107,38 +107,7 @@ jobs:
         run: ls -a "$GITHUB_WORKSPACE"
       - name: docker setup
         id: test
-        uses: docker://golang:1.24-alpine3.21
-        with:
-          entrypoint: /github/workspace/.github/workflows/docker/alpine_build_entrypoint.sh
-      - name: create archive file
-        run: |
-          mv generateblock-alpine "${FILENAME}"
-          gzip "${FILENAME}"
-          echo "---- dump gzip file ----"
-          ls -l generateblock*
-      - name: Upload Release Asset
-        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
-        with:
-          files: ${{ env.FILENAME }}.gz
-
-  upload-object-alpine-3-22:
-    name: upload-object-alpine-3.22
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    timeout-minutes: 10
-    env:
-      FILENAME: "generateblock-alpine3_22"
-    steps:
-      - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: 'false'
-      - name: list
-        run: ls -a "$GITHUB_WORKSPACE"
-      - name: docker setup
-        id: test
-        uses: docker://golang:1.24-alpine3.22
+        uses: docker://golang:1.26-alpine3.23
         with:
           entrypoint: /github/workspace/.github/workflows/docker/alpine_build_entrypoint.sh
       - name: create archive file
