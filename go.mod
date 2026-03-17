@@ -1,8 +1,8 @@
 module github.com/cryptogarageinc/generate-block-for-testing
 
-go 1.24
+go 1.25.0
 
-toolchain go1.24.6
+toolchain go1.25.8
 
 require (
 	github.com/alexflint/go-arg v1.6.1

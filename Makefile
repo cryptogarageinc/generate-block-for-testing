@@ -1,14 +1,14 @@
 current_dir = $(shell pwd)
 
-goimports_version = v0.36.0
-yamlfmt_version = v0.17.2
-golangci_version = v2.4.0
-actionlint_version = v1.7.7
-ghalint_version = v1.5.3
-pinact_version = v3.4.1
+goimports_version = v0.43.0
+yamlfmt_version = v0.21.0
+golangci_version = v2.11.3
+actionlint_version = v1.7.11
+ghalint_version = v1.5.5
+pinact_version = v3.9.0
 
 .PHONY: all
-all: generate format build
+all: generate format lint-all-fix build
 
 generate:
 	go generate ./...
@@ -17,6 +17,10 @@ format:
 	go run golang.org/x/tools/cmd/goimports@${goimports_version} -w .
 	go run github.com/google/yamlfmt/cmd/yamlfmt@${yamlfmt_version}
 	go mod tidy
+
+lint-all: lint lint-actions
+
+lint-all-fix: lint-fix lint-actions-fix
 
 lint:
 	go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${golangci_version} run

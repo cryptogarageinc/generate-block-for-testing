@@ -18,3 +18,4 @@
 /generateblock
 /tests/bitcoind_datadir
 /tests/elementsd_datadir
+*.code-workspace

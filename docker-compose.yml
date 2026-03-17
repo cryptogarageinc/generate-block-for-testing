@@ -18,10 +18,10 @@ x-elements-node-env: &elements-node-env
   GENERATE_BLOCK_COUNT: 1
 
 services:
-  alpine-3.22:
+  alpine-3.23:
     build:
       context: .
-      dockerfile: ./docker/alpine3_22.dockerfile
+      dockerfile: ./docker/alpine3_23.dockerfile
     volumes:
       - .:/workspace
     command: generateblock -h
@@ -83,7 +83,7 @@ services:
   generateblock-elements:
     build:
       context: .
-      dockerfile: ./docker/alpine3_22.dockerfile
+      dockerfile: ./docker/alpine3_23.dockerfile
     volumes:
       - .:/workspace
     working_dir: /workspace/
