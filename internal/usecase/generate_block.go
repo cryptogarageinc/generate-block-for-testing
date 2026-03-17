@@ -30,16 +30,16 @@ func (g *generateBlock) GenerateBlock(
 		case err != nil:
 			return err
 		case !exist && !config.CanDynafed():
-			if config.HasCheckInitialBlkDl {
-				isInitialBlkDl, err := g.generateBlockService.IsInitialBlockDownload(ctx)
-				if err != nil {
-					return err
-				} else if isInitialBlkDl {
-					// need to generate block
-				} else {
-					return pkgerror.ErrEmptyMempoolTx
-				}
-			} else {
+			if !config.HasCheckInitialBlkDl {
+				return pkgerror.ErrEmptyMempoolTx
+			}
+			isInitialBlkDl, err := g.generateBlockService.IsInitialBlockDownload(ctx)
+			switch {
+			case err != nil:
+				return err
+			case isInitialBlkDl:
+				// need to generate block
+			default:
 				return pkgerror.ErrEmptyMempoolTx
 			}
 		case !exist && config.CanDynafed():
