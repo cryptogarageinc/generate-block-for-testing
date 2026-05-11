@@ -6,7 +6,7 @@ toolchain go1.25.8
 
 require (
 	github.com/alexflint/go-arg v1.6.1
-	github.com/caarlos0/env/v11 v11.4.0
+	github.com/caarlos0/env/v11 v11.4.1
 	github.com/go-resty/resty/v2 v2.17.2
 	github.com/pkg/errors v0.9.1
 	go.uber.org/zap v1.28.0
